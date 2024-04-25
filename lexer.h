@@ -12,8 +12,8 @@
 int    get_token();                   /* return a token               */
 char * get_lexeme();                  /* return a lexeme              */
 
-void lexer_init();
-void print_buffer();
+//void lexer_init();
+//void print_buffer();
 
 #endif
 

@@ -37,25 +37,14 @@ static int  plex  = 0;               /* current index lexeme  buffer  */
 
 static void get_prog()
 {
-   //printf("\n *** TO BE DONE");
-   FILE *fp;
+   int i = 0;
    int ch;
-   
-   fp = fopen("testok1.pas", "r");
 
-   if (fp == NULL) {
-      perror("Error opening file");
-      return;
+   while ((ch = getchar()) != EOF) {
+      buffer[i++] = ch;
    }
-
-   pbuf = 0;
-   while ((ch = fgetc(fp)) != EOF) {
-      buffer[pbuf++] = ch;
-   }
-   buffer[pbuf++] = '$';
-   buffer[++pbuf] = '\0';
-   fclose(fp);
-
+   //buffer[i++] = '\n';
+   buffer[i++] = '$';
    }     
 
 /**********************************************************************/
@@ -64,15 +53,11 @@ static void get_prog()
 
 static void pbuffer()
 {   
-   //printf("\n *** TO BE DONE");
    printf("--------------------------------------------------------\n");
    printf(" THE PROGRAM TEXT \n");
    printf("--------------------------------------------------------\n");
-   int i = 0;
-   for(i = 0; i < BUFSIZE - 1; i++) {
-      printf("%c", buffer[i]);
-   }
-   printf("\n--------------------------------------------------------\n");
+   printf("\n%s", buffer);
+   printf("\n------------------------------------------------------\n");
    }
 
 /**********************************************************************/
@@ -81,11 +66,7 @@ static void pbuffer()
 
 static void get_char()
 {   
-   if (buffer[pbuf] < BUFSIZE - 1) {
-      lexbuf[plex++] = buffer[pbuf++];
-
-      //lexbuf[plex] = '\0';
-   }
+   lexbuf[plex++] = buffer[pbuf++];
 }
 
 /**********************************************************************/
@@ -97,7 +78,7 @@ static void get_char()
 /**********************************************************************/
 
 /**********************************************************************/
-/* Public wrapper functions                                              */
+/* Public wrapper funktioner för lite testning                        */
 /**********************************************************************/
 void lexer_init() {
    get_prog();
@@ -112,49 +93,54 @@ void print_buffer() {
 /**********************************************************************/
 int get_token()
 {  
+   
+   if(pbuf == 0) {
+      get_prog();
+      pbuffer();
+      if(strlen(buffer) == 2) {
+         return -1;
+      }
+   }
+
+   memset(lexbuf, 0, LEXSIZE);
    plex = 0;
+
+   /* Ignorera white space */
    while (isspace(buffer[pbuf])) {
       pbuf++;
-      if(buffer[pbuf] == '\0') return nfound;
    }
-   
-   if (buffer[pbuf] == '$') {
-      return '$';
 
-   } else if (isalpha(buffer[pbuf])) {
-      do {
+   /* Kopiera första char från buffer */
+   get_char();
+
+   /* If alfanumerisk */
+   if(isalpha(lexbuf[0])) {
+      while(!ispunct(buffer[pbuf]) && !isspace(buffer[pbuf])) {
          get_char();
-      } while (isalnum(buffer[pbuf]));
-      toktyp result = key2tok(lexbuf);
-      return result != nfound ? result : nfound;
-
-   } else if (isdigit(buffer[pbuf])) {
-         do {
-            get_char();
-         } while (isdigit(buffer[pbuf]));
-         return number;
-
-   } else if (buffer[pbuf] != '\0') {
-         get_char();
-         toktyp result = lex2tok(lexbuf);
-         return result != nfound ? result : nfound;
-      } else {
-         //exit(-1);
-         printf("Unhandled character '%d' at position %d\n", buffer[pbuf], pbuf);
-         pbuf++; 
-         return nfound;
       }
+      return key2tok(lexbuf);
+   }
+
+   /* If siffra */
+   if(isdigit(lexbuf[0])) {
+      while(!ispunct(buffer[pbuf]) && !isalpha(buffer[pbuf]) && !isspace(buffer[pbuf])) {
+         get_char();
+      }
+      return number;
+   }
+
+   /* If varken siffra eller alfanum */
+   if((lexbuf[0] == ':') && (buffer[pbuf] == '=')) {
+      get_char();
+   }
+   return lex2tok(lexbuf);
    }
 
 /**********************************************************************/
 /* Return a lexeme                                                    */
 /**********************************************************************/
 char * get_lexeme()
-{  
-   //printf("\n *** TO BE DONE");  return "$";
-   if (buffer[pbuf] == '$') {
-      return "$";
-   }
+{ 
    return lexbuf;
 }
 

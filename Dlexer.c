@@ -19,11 +19,8 @@ int main()
 {
    int i=0, t=0;
 
-   lexer_init();
-   print_buffer();
-   
    for (i=0; t!='$'; i++)
-      printf("\n token is %4d, lexeme is %10s ", t=get_token(), get_lexeme());
+   printf("\n token is %4d, lexeme is %10s ", t=get_token(), get_lexeme());
    printf("\n\n");
 
    return 0;

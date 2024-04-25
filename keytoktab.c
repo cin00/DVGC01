@@ -74,7 +74,6 @@ static tab keywordtab[ ] = {
 /**********************************************************************/
 void p_toktab()
 {  
-   //printf("\n *** TO BE DONE");
    int i;
    printf("\nToken table:\n");
    printf("Text\tToken\n");
@@ -104,7 +103,11 @@ toktyp lex2tok(char * fplex)
 		return keywordtab[i].token;
 	}
    }
-   return nfound;
+
+   if(isalpha(*fplex))
+   	return id;
+   else 
+	return number;
 }
 
 /**********************************************************************/
@@ -118,7 +121,7 @@ toktyp key2tok(char * fplex)
 			return keywordtab[i].token;
 		}
 	}
-	return nfound;
+	return id;
 }
 
 /**********************************************************************/
@@ -137,7 +140,7 @@ char * tok2lex(toktyp ftok)
 			return keywordtab[i].text;
 		}
 	}
-	return "KERROR";
+	return "TERROR";
 }
 
 /**********************************************************************/
