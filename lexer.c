@@ -93,6 +93,8 @@ void print_buffer() {
 /**********************************************************************/
 int get_token()
 {  
+   memset(lexbuf, 0, LEXSIZE);
+   plex = 0;
    
    if(pbuf == 0) {
       get_prog();
@@ -101,9 +103,6 @@ int get_token()
          return -1;
       }
    }
-
-   memset(lexbuf, 0, LEXSIZE);
-   plex = 0;
 
    /* Ignorera white space */
    while (isspace(buffer[pbuf])) {

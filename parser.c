@@ -13,6 +13,7 @@
 /**********************************************************************/
 #include "keytoktab.h"
 #include "lexer.h"
+#include "symtab.h"
 
 
 /**********************************************************************/
@@ -25,18 +26,38 @@ int  is_parse_ok=1;
 /**********************************************************************/
 /* Privata metoder för detta objekt                                   */
 /**********************************************************************/
-/*static void expr();
+static void expr();
 static void term();
 static void factor();
-static void operand();*/
+static void operand();
+
+/* PROGRAM_HEADER */
+static void program_header();
+
+/* VAR_PART */
+static void type();
+static void id_list();
+static void var_dec();
+static void var_dec_list();
+static void var_part();
+
+/* STAT_PART */
+static void operand();
+static void factor();
+static void term();
+static void expr();
+static void assign_stat();
+static void stat();
+static void stat_list();
+static void stat_part();
 
 /**********************************************************************/
 /* The Parser functions                                               */
 /**********************************************************************/
 void match(int t)
 {
-   if(DEBUG) printf("\n --------In match expected: %3d, found: %3d", 
-                     t, lookahead);
+   if(DEBUG) printf("\n --------In match expected: %s, found: %s", 
+                     tok2lex(t), get_lexeme(t));
    if (lookahead == t) lookahead = get_token();
    else {
       is_parse_ok=0;
@@ -47,7 +68,7 @@ void match(int t)
 /**********************************************************************/
 /* The grammar functions                                              */
 /**********************************************************************/
-void type() {
+static void type() {
    if (DEBUG) printf("\n *** In  type");
    if (lookahead == integer) {
       match(integer);
@@ -60,7 +81,7 @@ void type() {
 }
 
 
-void id_list() {
+static void id_list() {
    if (DEBUG) printf("\n *** In  id_list");
    if(lookahead == id)  match(id); else return; //Error handling TODO
    if (lookahead == ',') {
@@ -70,7 +91,7 @@ void id_list() {
    if (DEBUG) printf("\n *** Out  id_list");
 }
 
-void var_dec() {
+static void var_dec() {
    if (DEBUG) printf("\n *** In  var_dec");
    id_list();
    if(lookahead == ':') match(':'); else return; //Error handling TODO
@@ -79,7 +100,7 @@ void var_dec() {
    if (DEBUG) printf("\n *** Out  var_dec");
    }
 
-void var_dec_list() {
+static void var_dec_list() {
    if (DEBUG) printf("\n *** In  var_dec_list");
    var_dec();
    if(lookahead == id) {
@@ -87,23 +108,23 @@ void var_dec_list() {
    }
 }
 
-void var_part() {
+static void var_part() {
    if(DEBUG) printf("\n*** In var_part");
    if(lookahead == var) match(var); else return; //Error handling TODO
    var_dec_list();
    if(DEBUG) printf("\n*** Out var_part");
 }
 
-/*void operand() {
+static void operand() {
    if (lookahead == id) {
       match(id);
    }
-   else if(lookahead == num) {
-      match(num);
+   else if(lookahead == number) {
+      match(number);
    }
 }
 
-void factor() {
+static void factor() {
    if(lookahead == '(') {
       match('(');
       expr();
@@ -112,16 +133,16 @@ void factor() {
    operand();
 }
 
-void term() {
+static void term() {
    factor();
    if(lookahead == '*') {
       match('*');
       factor();
       term();
    }
-}*/
+}
 
-void expr() {
+static void expr() {
    if (DEBUG) printf("\n *** In  expr");
    term();
    if(lookahead == '+') {
@@ -129,6 +150,7 @@ void expr() {
       term();
       expr();
    }
+   if (DEBUG) printf("\n *** Out  expr");
 }
 
 static void assign_stat() {
@@ -176,7 +198,6 @@ static void program_header()
    if (lookahead == output) match(output); else return; //Error handling TODO
    if (lookahead == ')') match(')'); else return; //Error handling TODO
    if (lookahead == ';') match(';'); else return; //Error handling TODO
-
    if (DEBUG) printf("\n *** Out  program_header");
       
    }
