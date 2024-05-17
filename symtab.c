@@ -1,3 +1,5 @@
+/*  HENRIK HULTGREN  */
+
 /**********************************************************************/
 /* lab 1 DVG C01 - Symbol Table OBJECT                                */
 /**********************************************************************/
@@ -59,7 +61,12 @@ static void set_addr(int ftref, int    faddr)  { addr[ftref] = faddr; }
 static void addrow(char *fname, toktyp frole, toktyp ftype, 
                    int fsize, int faddr)
 {
-    printf("\n *** TO BE DONE");
+    set_name(numrows, fname);
+    set_role(numrows, frole);
+    set_type(numrows, ftype);
+    set_size(numrows, fsize);
+    set_addr(numrows, faddr);
+    numrows++;
 
 }
 /**********************************************************************/
@@ -80,8 +87,11 @@ static void initst()
 /**********************************************************************/
  static int get_ref(char * fpname)
  {
-   printf("\n *** TO BE DONE"); return 0;
-
+    for(int i = startp; i < numrows; i++) {
+        if(strcmp(name[i], fpname) == 0)
+            return i;
+    }
+    return nfound;
  }
 
 /**********************************************************************/
@@ -92,48 +102,82 @@ static void initst()
 /**********************************************************************/
 static void p_symrow(int ftref)
 {
-   printf("\n *** TO BE DONE");
-
+   for(int i = startp; i < ftref; i++)
+    printf("\n%11s %10s %10s %9d %9d", get_name(i), tok2lex(get_role(i)), tok2lex(get_type(i)), get_size(i), get_addr(i));
    }
 
 void p_symtab()
 {
-   printf("\n *** TO BE DONE");
+   printf("\n--------------------------------------------------------\n");
+   printf(" THE SYMBOL TABLE \n");
+   printf("--------------------------------------------------------\n");
+   printf("     NAME        ROLE        TYPE        SIZE      ADDR\n");
+   printf("\n--------------------------------------------------------\n");
+   p_symrow(numrows);
+   printf("\n--------------------------------------------------------\n");
+   printf(" STATIC STORAGE REQUIRED is %d BYTES", get_size(startp));
+   printf("\n--------------------------------------------------------\n");
    }
 
 /**********************************************************************/
 /*  Add a program name to the symbol table                            */
 /**********************************************************************/
-void addp_name(char * fpname) { 
-
-   printf("\n *** TO BE DONE");
-
+void addp_name(char * fpname) {
+    initst();
+    startp = numrows;
+    addrow(fpname, program, program, 0, 0);
    }
 
 /**********************************************************************/
 /*  Add a variable name to the symbol table                           */
 /**********************************************************************/
-void addv_name(char * fpname) { printf("\n *** TO BE DONE"); }
+void addv_name(char * fpname) {
+    addrow(fpname, var, nfound, 0, 0);
+}
 
 /**********************************************************************/
 /*  Find a name in the the symbol table                               */
 /*  return a Boolean (true, false) if the name is in the ST           */
 /**********************************************************************/
-int find_name(char * fpname) { printf("\n *** TO BE DONE"); return 0; }
+int find_name(char * fpname) { 
+    if(get_ref(fpname) != nfound)
+        return 1;
+    return 0;
+}
 
 /**********************************************************************/
 /*  Set the type of an id list in the symbol table                    */
 /**********************************************************************/
 void setv_type(toktyp ftype) {
    
-   printf("\n *** TO BE DONE");
+   static int address = 0;
+   int i;
+   for (i = 0; i < numrows; i++) {
+    if(get_type(i) == nfound) {
+        set_type(i, ftype);
+        if(ftype == boolean || ftype == integer) {
+            set_size(i, 4);
+            set_addr(i, address);
+            address += 4;
+        } else if(ftype == real) {
+            set_size(i, 8);
+            set_addr(i, address);
+            address += 8;
+        }
+        set_size(startp, get_size(startp) + get_size(i));
+    }
+   }
 
 }
 
 /**********************************************************************/
 /*  Get the type of a variable from the symbol table                  */
 /**********************************************************************/
-toktyp get_ntype(char * fpname) { printf("\n *** TO BE DONE"); return 0; }
+toktyp get_ntype(char * fpname) { 
+    if(find_name(fpname) != 0)
+        return get_type(get_ref(fpname));
+    return undef;
+ }
 
 /**********************************************************************/
 /* End of code                                                        */

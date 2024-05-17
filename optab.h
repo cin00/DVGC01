@@ -2,23 +2,17 @@
 /* constants & public functions                                       */
 /**********************************************************************/
 
-#ifndef SYMTAB_H
-#define SYMTAB_H
+#ifndef OPTAB_H
+#define OPTAB_H
 
 /**********************************************************************/
 /*  PUBLIC METHODS for this OBJECT  (EXPORTED)                        */
 /**********************************************************************/
 #include "keytoktab.h"
 
-void p_symtab();                   /* display                 the ST  */
+void   p_optab();                            /* display the optab     */
 
-void   addp_name(char * fpname);   /* add  a program name  to the ST  */
-void   addv_name(char * fpname);   /* add  a variable name to the ST  */
-
-toktyp get_ntype(char * fpname);   /* get  a type        from the ST  */
-int    find_name(char * fpname);   /* find a name          in the ST  */
-
-void   setv_type (toktyp ftype);   /* set variable types   in the ST  */
+toktyp get_otype( toktyp op, toktyp arg1, toktyp arg2);
 
 #endif
 

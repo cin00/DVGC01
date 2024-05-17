@@ -1,3 +1,5 @@
+/*  HENRIK HULTGREN  */
+
 /**********************************************************************/
 /* lab 1 DVG C01 - Lexer OBJECT                                       */
 /**********************************************************************/
@@ -53,11 +55,11 @@ static void get_prog()
 
 static void pbuffer()
 {   
-   printf("--------------------------------------------------------\n");
-   printf(" THE PROGRAM TEXT \n");
-   printf("--------------------------------------------------------\n");
-   printf("\n%s", buffer);
-   printf("\n------------------------------------------------------\n");
+   printf("\n________________________________________________________ ");
+    printf("\n THE PROGRAM TEXT");
+    printf("\n________________________________________________________ ");
+    printf("\n%s", buffer);
+    printf("\n________________________________________________________ ");
    }
 
 /**********************************************************************/
@@ -112,15 +114,13 @@ int get_token()
    /* Kopiera första char från buffer */
    get_char();
 
-   /* If alfanumerisk */
    if(isalpha(lexbuf[0])) {
       while(!ispunct(buffer[pbuf]) && !isspace(buffer[pbuf])) {
          get_char();
       }
       return key2tok(lexbuf);
    }
-
-   /* If siffra */
+   
    if(isdigit(lexbuf[0])) {
       while(!ispunct(buffer[pbuf]) && !isalpha(buffer[pbuf]) && !isspace(buffer[pbuf])) {
          get_char();
