@@ -1,6 +1,6 @@
 #!/bin/sh
 
-for i in TestSuite/*.pas; do
+for i in testfiles/*.pas; do
 	echo "testing $i"
 	./parser <  $i
 done
